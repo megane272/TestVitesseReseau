@@ -1,36 +1,30 @@
-const speedTest = require('speedtest-net');
-const { promisify } = require('util');
+const FastSpeedtest = require('fast-speedtest-api');
+//const { promisify } = require('util');
 
 module.exports = {
   testSpeed: async (req, res) => {
   try {
-    const test = speedTest({ acceptLicense: true, acceptGdpr: true});
+    const speedtest = new FastSpeedtest({
+      verbose: false,
+      timeout: 10000
+    });
 
-    test.on('data', data => {
-      console.log('Progression:', data.progress);
-  });
-
-    const results = await promisify(test.on.bind(test))('results');
+    const [ping, download, upload] = await Promise.all([
+      speedtest.getPing(),
+      speedtest.getDownloadSpeed(),
+      speedtest.getUploadSpeed()
+    ]);
 
     res.json({
-      ping: `${results.ping.latency.toFixed(2)} ms`,
-      download: `${(results.download.bandwidth / 125000).toFixed(2)} Mbps`,
-      upload: `S{(results.upload.bandwith / 125000).toFixed(2)} Mbps`,
-      isp: results.isp,
-      server: {
-        name: results.server.name,
-        location: results.server.location
-      },
+      ping: `${ping} ms`,
+      download: `${(download / 1000000).toFixed(2)} Mbps`,
+      upload: `${(upload / 1000000).toFixed(2)} Mbps`,
       timestamp: new Date().toISOString()
     });
     
   } catch (err) {
-      console.error("Complet error", err);
-      res.status(500).json({
-        error: 'Test failed',
-        details: err.message,
-        solution: 'Internet connection issue'
-      });
+      console.error(err);
+      res.status(500).json({error:err.message});
     }
   }
 };
