@@ -1,9 +1,9 @@
 {
-  "name": "Network Speed Test",
   "version": "1.0.0",
   "description": "Comme son nom l'indique, c'est une API de vitesse réseau (download/upload) Elle simule des tests de bande passante et retourne les résultats.",
   "main": "serveur.js",
   "scripts": {
+    "start": "node serveur.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -20,6 +20,9 @@
   },
   "homepage": "https://github.com/megane272/TestVitesseReseau#readme",
   "dependencies": {
+    "cors": "^2.8.5",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
     "fast-speedtest-api": "^0.3.2"
   }
 }
